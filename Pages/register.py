@@ -5,8 +5,6 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 from db import storethedata
 
-
-
 st.title("Register")
 usr=st.text_input("Username")
 email=st.text_input("Email")
@@ -20,5 +18,5 @@ if st.button("Confirm Registration"):
         "Email": email,
         "Password": Password
     }
-    storethedata(Obj1)
+    storethedata("Users",Obj1)
 
