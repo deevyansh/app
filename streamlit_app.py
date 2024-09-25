@@ -5,39 +5,53 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 
 login_page=st.Page(
-    page="Pages/login.py",
+    page="pages/login.py",
     title="Login",
     icon="👤",
     default=True
 )
 register_page=st.Page(
-    page="Pages/register.py",
+    page="pages/register.py",
     title="Register",
     icon="📊"
 )
 bidding_page = st.Page(
-    page="Pages/bidding.py",
+    page="pages/bidding.py",
     title="Make your bids",
     icon="💸"  # Money with wings, indicating bids or money transactions
 )
 
 check_dates = st.Page(
-    page="Pages/check_dates.py",
+    page="pages/check_dates.py",
     title="Check the Bidding hours",
     icon="⏰"  # Alarm clock, indicating time for checking bidding hours
 )
 
 result_page = st.Page(
-    page="Pages/result.py",
+    page="pages/result.py",
     title="Result Window",
     icon="🏆"  # Trophy, indicating results or success
 )
 
+logout=st.Page(
+    page="pages/logout.py",
+    title="Logout"
+)
+
 
 ## -- Navigation setup -- ##
-pg=st.navigation({
-        "Account": [login_page,register_page],
-        "Users":[bidding_page, check_dates, result_page]
-        })
+
+if("user" in st.session_state):
+    pg=st.navigation({
+        "Dashboard": [bidding_page,check_dates,result_page,logout]
+    })
+else:
+    pg=st.navigation({
+        "Users":[login_page,register_page]
+    })
+
 pg.run()
+
+
+
 
