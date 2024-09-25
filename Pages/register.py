@@ -19,4 +19,5 @@ if st.button("Confirm Registration"):
         "Password": Password
     }
     storethedata("Users",Obj1)
+    st.success('Registration Done. Please Login')
 
