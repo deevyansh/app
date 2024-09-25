@@ -5,7 +5,7 @@ from firebase_admin import firestore
 from db import checkdata
 from Pages.globals import insert,get
 
-from streamlit_extras.switch_page_button import switch_page
+
 
 st.title("Login")
 usr=st.text_input("Username")
