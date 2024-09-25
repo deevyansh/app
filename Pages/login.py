@@ -6,7 +6,6 @@ from db import checkdata
 from Pages.globals import insert,get
 
 
-
 st.title("Login")
 usr=st.text_input("Username")
 password=st.text_input("Password")
@@ -19,5 +18,7 @@ if(st.button("Login")):
         print("Hi i am global user now- ",get("user"))
         st.success('Login Successfully!', icon="✅")
         st.balloons()
+        st.rerun()
     else:
         st.error('Error in Login', icon="🚨")
+
