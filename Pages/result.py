@@ -11,7 +11,7 @@ state=st.radio("Which Bids to show??" ,["Selected","Non Selected", "Waiting"])
 usr=get("user")
 Obj1=[usr, from_date,to_date, state]
 
-df=checkbids(Obj1)
+df=checkbids(Obj1)[0]
 
 st.table(df)
 

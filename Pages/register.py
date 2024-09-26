@@ -8,8 +8,8 @@ from db import storethedata
 st.title("Register")
 usr=st.text_input("Username")
 email=st.text_input("Email")
-Password=st.text_input("Password")
-st.text_input("Confirm Password")
+Password=st.text_input("Password", type="password")
+st.text_input("Confirm Password", type="password")
 
 
 if st.button("Confirm Registration"):
