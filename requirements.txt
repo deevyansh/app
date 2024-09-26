@@ -1,3 +1,4 @@
-firebase_admin
+firebase-admin
+firebase
 pandas
-datetime
+scipy

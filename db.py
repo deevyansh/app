@@ -38,10 +38,20 @@ def checkbids(Obj1):
     bids_ref=db.collection("Bids")
     docs=bids_ref.stream()
     df=pd.DataFrame()
+    list=[]
     for doc in docs:
         date=datetime(doc.to_dict()["Year"], doc.to_dict()["Month"], doc.to_dict()["Date"]).date()
-        if(doc.to_dict()["User"]==Obj1[0] and doc.to_dict()["State"]==Obj1[3] and date>=Obj1[1] and date<=Obj1[2]):
+        if((doc.to_dict()["User"]==Obj1[0] or Obj1[0]=="") and doc.to_dict()["State"]==Obj1[3] and date>=Obj1[1] and date<=Obj1[2]):
             df_dict=pd.DataFrame([doc.to_dict()])
             df=pd.concat([df,df_dict], ignore_index=True)
-    return df
+            list.append(doc.id)
+    return df,list
 
+def changebids(Obj1, doc_id):
+    print(doc_id)
+    db=firestore.client()
+    if(Obj1["Finalized Quantities"]==0):
+        db.collection("Bids").document(doc_id).update({"State": "Non Selected"})
+    else:
+        db.collection("Bids").document(doc_id).update({"State":"Selected", "Quantity_Selected":Obj1["Finalized Quantities"]})
+    return True
