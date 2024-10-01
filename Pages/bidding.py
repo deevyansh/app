@@ -2,6 +2,9 @@ import streamlit as st
 from Pages.globals import insert,get
 import pandas as pd
 from db import storethedata
+import smtplib
+from email.mime.text import MIMEText
+from db import return_email
 
 st.subheader("Welcome")
 st.write(get("user"))
@@ -31,6 +34,10 @@ if(Bid_Input=="Multiple Bid"):
     l[2].append(from_widget3.number_input("From Hour3", min_value=0, max_value=23))
     l[2].append(to_widget3.number_input("To Hour3", min_value=0, max_value=23))
 
+
+options=st.radio("Send Me a Email Receipt of the Bids",["Yes","No"])
+
+
 if(st.button("Confirm the Bids")):
     df=pd.read_csv(f"""Data/{get("user")}.csv""")
 
@@ -46,6 +53,7 @@ if(st.button("Confirm the Bids")):
                 break
     if(p):
         st.success("Bids Submitted")
+        str="The bids submitted by you are the following: \n"
         for j in  range (len(l)):
             for i in range (l[j][3],(l[j][4]+1)):
                 Obj={"User": get("user"),
@@ -56,7 +64,20 @@ if(st.button("Confirm the Bids")):
                      "Year": l[j][2].year,
                      "Hour": i,
                      "State": "Waiting"}
+                str=str+(f"""Price={Obj["Price"]}, Quantity={Obj["Quantity"]}, Date={Obj["Date"]}/{Obj["Month"]}/{Obj["Year"]}, Hour={Obj["Hour"]}\n""")
                 storethedata("Bids",Obj)
+        if (options == "Yes"):
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            # server.login('deevyansh.iitd@gmail.com', 'fvay qntl tetx bdyo')
+            server.login('flexiblemarket0@gmail.com', 'uvpk bdlk vqdl icmh')
+            message=MIMEText(str,"plain")
+            message["Subject"]= "Regarding the Bids submitted on the Flexible Market Portal"
+            message["From"]="flexiblemarket0@gmail.com"
+            Obj={"User":get("user")}
+            message["To"] = return_email(Obj)
+            server.sendmail("flexiblemarket0@gmail.com",return_email(Obj),message.as_string())
+            server.quit()
 
 
 
