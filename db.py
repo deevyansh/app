@@ -17,18 +17,13 @@ def storethedata(collection,Obj1):
         db.collection(f"{collection}").add(record)
 
 def checkdata(collection,Obj1):
-
-
     db = firestore.client()
-
     users_ref = db.collection(f"{collection}")
     docs = users_ref.stream()
-
     for doc in docs:
         if(doc.to_dict()["User"]==Obj1[0] and doc.to_dict()["Password"]==Obj1[1]):
             print("Login successfully")
             return True
-
     return False
 
 
@@ -48,10 +43,17 @@ def checkbids(Obj1):
     return df,list
 
 def changebids(Obj1, doc_id):
-    print(doc_id)
     db=firestore.client()
     if(Obj1["Finalized Quantities"]==0):
         db.collection("Bids").document(doc_id).update({"State": "Non Selected"})
     else:
         db.collection("Bids").document(doc_id).update({"State":"Selected", "Quantity_Selected":Obj1["Finalized Quantities"]})
     return True
+
+def return_email(Obj1):
+    db=firestore.client()
+    users_ref=db.collection("Users")
+    docs=users_ref.stream()
+    for doc in docs:
+        if(doc.to_dict()["User"]==Obj1["User"]):
+            return doc.to_dict()["Email"]
