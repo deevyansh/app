@@ -2,3 +2,4 @@ firebase-admin
 firebase
 pandas
 scipy
+smtplib
