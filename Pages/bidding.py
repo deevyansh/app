@@ -5,6 +5,7 @@ from db import storethedata
 import smtplib
 from email.mime.text import MIMEText
 from db import return_email
+import os
 
 st.subheader("Welcome")
 st.write(get("user"))
@@ -39,7 +40,11 @@ options=st.radio("Send Me a Email Receipt of the Bids",["Yes","No"])
 
 
 if(st.button("Confirm the Bids")):
-    df=pd.read_csv(f"""Data/{get("user")}.csv""")
+    st.title("Check Dates")
+    if (os.path.exists(f"""Data/{get("user")}.csv""")):
+        df = pd.read_csv(f"""Data/{get("user")}.csv""")
+    else:
+        df = pd.read_csv("Data/NO.csv")
 
     if (Bid_Input == "Single Bid"):
         l=[l[0]]
@@ -76,6 +81,7 @@ if(st.button("Confirm the Bids")):
             message["From"]="flexiblemarket0@gmail.com"
             Obj={"User":get("user")}
             message["To"] = return_email(Obj)
+            print(message["To"], message.as_string())
             server.sendmail("flexiblemarket0@gmail.com",return_email(Obj),message.as_string())
             server.quit()
 
