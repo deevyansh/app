@@ -50,6 +50,10 @@ admin2_page=st.Page(
     title="Available Bids"
 )
 
+fast1=st.Page(
+    page="Pages/fast_bid.py",
+    title="Fast_Bidding"
+)
 
 ## -- Navigation setup -- ##
 
@@ -60,7 +64,7 @@ if("user" in st.session_state and st.session_state["user"]=="admin"):
 
 elif("user" in st.session_state):
     pg=st.navigation({
-        "Dashboard": [bidding_page,check_dates,result_page,logout]
+        "Dashboard": [bidding_page,check_dates,result_page,logout, fast1]
     })
 
 else:
