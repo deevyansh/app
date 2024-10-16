@@ -4,8 +4,9 @@ import pandas as pd
 from db import storethedata
 import smtplib
 from email.mime.text import MIMEText
-from db import return_email
+from db import return_email,is_there
 import os
+
 
 st.subheader("Welcome")
 st.write(get("user"))
@@ -39,8 +40,7 @@ if(Bid_Input=="Multiple Bid"):
 options=st.radio("Send Me a Email Receipt of the Bids",["Yes","No"])
 
 
-if(st.button("Confirm the Bids")):
-    st.title("Check Dates")
+if(st.button("Submit the Bids")):
     if (os.path.exists(f"""Data/{get("user")}.csv""")):
         df = pd.read_csv(f"""Data/{get("user")}.csv""")
     else:
@@ -52,15 +52,26 @@ if(st.button("Confirm the Bids")):
     p=True  ## if everything is correct
     for j in range (len(l)):
         for i in range (l[j][3], l[j][4]):
+            Obj1=[get("user"), l[j][2].year, l[j][2].month, l[j][2].day, i]
+            Obj2=["admin", l[j][2].year, l[j][2].month, l[j][2].day, i]
+            if(is_there(Obj1)):
+                p=False
+                st.error("Bids are colliding with the previous done Bids")
+                break
+            if(is_there(Obj2)):
+                p = False
+                st.error("Market is already cleared for this hour")
+                break
             if(len(df[(df['date']==l[j][2].day) & (df['hour']==i) & (df['month']==l[j][2].month)])==0):
                 p=False
                 st.error("Please recheck the bids")
                 break
+
     if(p):
         st.success("Bids Submitted")
         str="The bids submitted by you are the following: \n"
         for j in  range (len(l)):
-            for i in range (l[j][3],(l[j][4]+1)):
+            for i in range (l[j][3],(l[j][4])):
                 Obj={"User": get("user"),
                      "Quantity": l[j][0],
                      "Price": l[j][1],
@@ -83,8 +94,7 @@ if(st.button("Confirm the Bids")):
             message["To"] = return_email(Obj)
             print(message["To"], message.as_string())
             server.sendmail("flexiblemarket0@gmail.com",return_email(Obj),message.as_string())
-            server.quit()
-
+            server.quit
 
 
 
