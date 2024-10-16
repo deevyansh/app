@@ -3,6 +3,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 import pandas as pd
 from datetime import datetime
+from google.cloud.firestore_v1.base_query import  FieldFilter, BaseCompositeFilter
 
 cred = credentials.Certificate('deleteme-367bd-firebase-adminsdk-x424d-dd97c64bc9.json')
 app = firebase_admin.initialize_app(cred)
@@ -27,6 +28,23 @@ def checkdata(collection,Obj1):
     return False
 
 
+def is_there(Obj1):
+    # ["User", "Year", "Month", "Date", "Hour"]
+    db = firestore.client()
+    bids_ref = db.collection("Bids")
+    filter_1 = FieldFilter("Year", "==", Obj1[1])
+    if(Obj1[0]=="admin"):
+        filter_2=FieldFilter("State","==", "Selected")
+    else:
+        filter_2 = FieldFilter("User", "==", Obj1[0])
+    filter_3 = FieldFilter("Month", "==", Obj1[2])
+    filter_4 = FieldFilter("Date", "==", Obj1[3])
+    filter_5 = FieldFilter("Hour", "==", Obj1[4])
+    docs = bids_ref.where(filter=filter_1).where(filter=filter_2).where(filter=filter_3).where(filter=filter_4).where(filter=filter_5).stream()
+    return len(list(docs)) != 0
+
+
+
 def checkbids(Obj1):
     ## Convention - [User,From Date,To Date State]
     db=firestore.client()
@@ -40,6 +58,16 @@ def checkbids(Obj1):
             df_dict=pd.DataFrame([doc.to_dict()])
             df=pd.concat([df,df_dict], ignore_index=True)
             list.append(doc.id)
+    if(len(df)>0):
+
+        df['Month'] = df['Month'].astype(int)
+        df['Hour'] = df['Hour'].astype(int)
+        df['Date'] = df['Date'].astype(int)
+        df["Hour+1"] = df["Hour"] + 1
+        df['day(dd/mm/yyyy)'] = df['Date'].astype(str) + '/' + df['Month'].astype(str) + "/" +df["Year"].astype(str)
+        df["Hour"] = df['Hour'].astype(str) + ":00-" + df["Hour+1"].astype(str) + ":00"
+        df.drop(columns=["Date", "Month", "Hour+1","Year"], inplace=True)
+
     return df,list
 
 def changebids(Obj1, doc_id):
@@ -57,3 +85,19 @@ def return_email(Obj1):
     for doc in docs:
         if(doc.to_dict()["User"]==Obj1["User"]):
             return doc.to_dict()["Email"]
+
+
+def checkbids1(Obj1):
+    ## Convention - [User,From Date,To Date State]
+    db=firestore.client()
+    bids_ref=db.collection("Bids")
+    docs=bids_ref.stream()
+    df=pd.DataFrame()
+    list=[]
+    for doc in docs:
+        date=datetime(doc.to_dict()["Year"], doc.to_dict()["Month"], doc.to_dict()["Date"]).date()
+        if((doc.to_dict()["User"]==Obj1[0] or Obj1[0]=="") and doc.to_dict()["State"]==Obj1[3] and date>=Obj1[1] and date<=Obj1[2]):
+            df_dict=pd.DataFrame([doc.to_dict()])
+            df=pd.concat([df,df_dict], ignore_index=True)
+            list.append(doc.id)
+    return df,list
