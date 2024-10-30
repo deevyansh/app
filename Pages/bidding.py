@@ -54,18 +54,24 @@ if(st.button("Submit the Bids")):
         for i in range (l[j][3], l[j][4]):
             Obj1=[get("user"), l[j][2].year, l[j][2].month, l[j][2].day, i]
             Obj2=["admin", l[j][2].year, l[j][2].month, l[j][2].day, i]
+            df_temp=df[(df['date']==l[j][2].day) & (df['hour']==i) & (df['month']==l[j][2].month)]
             if(is_there(Obj1)):
                 p=False
-                st.error("Bids are colliding with the previous done Bids")
+                st.error("Bids are already submitted for the given hour and date.")
                 break
             if(is_there(Obj2)):
                 p = False
                 st.error("Market is already cleared for this hour")
                 break
-            if(len(df[(df['date']==l[j][2].day) & (df['hour']==i) & (df['month']==l[j][2].month)])==0):
-                p=False
+            if(len(df_temp)==0):
+                p = False
                 st.error("Please recheck the bids")
                 break
+            if(len(df_temp)!=0):
+                if(df_temp.iloc[0].loc['value']<l[j][0] or l[j][0]<=0):
+                    p=False
+                    st.error("Please recheck the bids Quantity")
+                    break
 
     if(p):
         st.success("Bids Submitted")
