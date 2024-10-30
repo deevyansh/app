@@ -33,6 +33,13 @@ result_page = st.Page(
     icon="🏆"  # Trophy, indicating results or success
 )
 
+fast1 = st.Page(
+    page="Pages/fast_bid.py",
+    title="Fast_Bidding",
+    icon="🚀"
+)
+
+
 logout=st.Page(
     page="Pages/logout.py",
     title="Logout"
@@ -50,10 +57,7 @@ admin2_page=st.Page(
     title="Available Bids"
 )
 
-fast1=st.Page(
-    page="Pages/fast_bid.py",
-    title="Fast_Bidding"
-)
+
 
 ## -- Navigation setup -- ##
 
@@ -64,7 +68,7 @@ if("user" in st.session_state and st.session_state["user"]=="admin"):
 
 elif("user" in st.session_state):
     pg=st.navigation({
-        "Dashboard": [bidding_page,check_dates,result_page,logout, fast1]
+        "Dashboard": [bidding_page,check_dates,result_page,fast1,logout]
     })
 
 else:
@@ -74,7 +78,3 @@ else:
 st.sidebar.image("Screenshot 2024-09-30 at 9.26.48 PM.png")
 st.sidebar.write("Please send your queries at flexiblemarket0@gmail.com by your registered email id.")
 pg.run()
-
-
-
-
