@@ -48,6 +48,7 @@ if (st.button("Clear the Market")  or ("df" in st.session_state)):
             del st.session_state["doc_id_list"]
             del st.session_state["df"]
             st.success("Market Cleared!!")
+
     else:
         st.error("No bids for that particular hour")
 
